@@ -1,0 +1,11 @@
+.card {
+  width: 50%;
+  margin: auto;
+  max-width: 500px;
+  margin-top: 15%;
+  height: auto;
+  padding: 50px;
+  background-color: #fff;
+  border-radius: 3px;
+  box-shadow: 0 17px 50px 0 rgb(0 0 0 / 19%), 0 12px 15px 0 rgb(0 0 0 / 24%);
+}
