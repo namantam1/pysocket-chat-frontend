@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useRef } from "react";
-import { globalContext } from "../App";
+import { globalContext } from "App";
 import { v4 as uuid4 } from "uuid";
-import { myaxios } from "../myaxios";
-import { socket } from "../socket";
-import { reverseMap } from "../utils";
-import Image from "./Image";
+import { myaxios } from "services/http";
+import { socket } from "services/socket";
+import { reverseMap } from "utils/function";
+import Image from "core/Image";
 
 export default function Conversion() {
   const { state, dispatch } = useContext(globalContext);

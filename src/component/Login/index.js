@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { myaxios } from "../../myaxios";
-import "./login.css";
+import { myaxios } from "../../services/http";
+import "./style.css";
 
 const url = "/api/login/";
 

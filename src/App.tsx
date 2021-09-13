@@ -1,20 +1,29 @@
-import { createContext, useReducer, useState } from "react";
-import "./App.css";
-import Conversion from "./component/Conversion";
-import Login from "./component/Login";
-import Side from "./component/Side";
-import { myaxios } from "./myaxios";
-import { initialData, reducer } from "./reducer";
-import { parseUserData } from "./utils";
+import React, { createContext, useEffect, useReducer, useState } from "react";
+import "assets/css/style.css";
+import Conversion from "component/Conversion";
+import Login from "component/Login";
+import Side from "component/Side";
+import { myaxios } from "services/http";
+import {
+  ActionType,
+  IInitialData,
+  initialData,
+  IReducer,
+  reducer,
+} from "reducer";
+import { parseUserData } from "utils/parser";
 
-export const globalContext = createContext();
+export const globalContext = createContext<any>(null);
 
 function App() {
-  const [state, dispatch] = useReducer(reducer, initialData);
+  const [state, dispatch] = useReducer<React.Reducer<IInitialData, IReducer>>(
+    reducer,
+    initialData
+  );
   const [loading, setLoading] = useState(true);
   const [login, setLogin] = useState(false);
 
-  useState(async () => {
+  useEffect(() => {
     const access = localStorage.getItem("access");
 
     if (access && access !== "undefined") {
@@ -22,7 +31,7 @@ function App() {
         .get("/api/profile/")
         .then((res) => {
           const data = parseUserData(res.data);
-          dispatch({ type: "setCurrentUser", payload: data });
+          dispatch({ type: ActionType.setCurrentUser, payload: data });
           setLoading(false);
           setLogin(true);
         })

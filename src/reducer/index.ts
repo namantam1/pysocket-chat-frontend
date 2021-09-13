@@ -1,36 +1,62 @@
-import { dummpyMessages, images } from "../component/data";
+import React from "react";
 
-export const initialData = {
-  currentUser: {
-    id: 1,
-    name: "Test User",
-    image: images[0],
-  },
-  conversions: [
-    {
-      id: 2,
-      name: "Jhon mario",
-      image: images[2],
-      status: "Online",
-      isActive: false,
-      text: "",
-      messages: dummpyMessages,
-    },
-    {
-      id: 3,
-      name: "Naman Tamrakar",
-      image: images[5],
-      status: "Online",
-      isActive: false,
-      text: "",
-      messages: dummpyMessages,
-    },
-  ],
+export type ID = string;
+
+export interface IUser {
+  id: ID;
+  name: string;
+  image: string;
+}
+
+export interface IMessage {
+  id: ID;
+  room: ID;
+  user: number;
+  image?: string;
+  text?: string;
+  seen: boolean;
+  timestamp: string;
+}
+
+export interface IConversion {
+  id: ID;
+  name: string;
+  image?: string;
+  status: string;
+  isActive: boolean;
+  messages: IMessage[];
+}
+
+export interface IInitialData {
+  currentUser?: IUser;
+  conversions: IConversion[];
+}
+
+export enum ActionType {
+  setCurrentUser = "setCurrentUser",
+  setConversions = "setConversions",
+  setActiveChat = "setActiveChat",
+  setMessage = "setMessage",
+  setMessages = "setMessages",
+  setText = "setText",
+  logout = "logout",
+}
+
+export interface IReducer {
+  type: ActionType;
+  payload: any;
+}
+
+export const initialData: IInitialData = {
+  conversions: [],
 };
 
-export const reducer = (state = initialData, action) => {
+export const reducer: React.Reducer<IInitialData, IReducer> = (
+  state = initialData,
+  action
+) => {
   const { type, payload } = action;
-  let conversionId, text;
+  let conversionId: ID;
 
   switch (type) {
     case "setCurrentUser":
@@ -87,7 +113,7 @@ export const reducer = (state = initialData, action) => {
 
     case "setText":
       conversionId = payload.id;
-      text = payload.text;
+      let text = payload.text;
       return {
         ...state,
         conversions: state.conversions.map((i) =>
@@ -96,7 +122,7 @@ export const reducer = (state = initialData, action) => {
       };
 
     case "logout":
-      return {};
+      return state;
 
     default:
       return state;

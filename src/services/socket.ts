@@ -1,12 +1,12 @@
 import { io } from "socket.io-client";
-import { myaxios } from "./myaxios";
+import { myaxios } from "./http";
 
 export const socket = io("https://sleepy-stream-26298.herokuapp.com", {
   autoConnect: false,
   // reconnection: false,
 });
 
-window.socket = socket;
+// window.socket = socket;
 
 export const tryReconnect = () => {
   console.log("trying reconnecting...");

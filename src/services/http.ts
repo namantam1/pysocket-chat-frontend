@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosInstance } from "axios";
 
 export const BASE_URL = "https://sleepy-stream-26298.herokuapp.com";
 
@@ -28,7 +28,7 @@ instance.interceptors.request.use(function (config) {
   return config;
 });
 
-function createAxiosResponseInterceptor(axiosInstance) {
+function createAxiosResponseInterceptor(axiosInstance: AxiosInstance) {
   const interceptor = axiosInstance.interceptors.response.use(
     (response) => response,
     (error) => {

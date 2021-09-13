@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import { globalContext } from "../App";
-import { parseUserData } from "../utils";
-import { socket } from "../socket";
-import { myaxios } from "../myaxios";
-import Image from "./Image";
+import { globalContext } from "App";
+import { parseUserData, toFullName } from "utils/parser";
+import { debounce } from "utils/function";
+import { socket } from "services/socket";
+import { myaxios } from "services/http";
+import Image from "core/Image";
 
 export default function Side() {
   const { state, dispatch } = useContext(globalContext);
@@ -69,12 +70,26 @@ export default function Side() {
   }, []);
 
   const [twosideActive, setTwosideActive] = useState(false);
+  const [searchText, setSearchText] = useState("");
   const [searchCoversions, setSearchCoversions] = useState([]);
 
-  const fetchConversion = (text) => {
-    console.log(text);
-    setSearchCoversions([]);
-  };
+  const fetchConversion = debounce((text) => {
+    if (text) {
+      myaxios
+        .get("/api/signup/", {
+          params: {
+            username__icontains: text,
+            search: text,
+          },
+        })
+        .then((res) => {
+          setSearchCoversions(res.data.results);
+        })
+        .catch((err) => console.log(err));
+    }
+  }, 100);
+
+  const addNewConversion = (id, image, name) => {};
 
   return (
     <div className="col-sm-4 side">
@@ -88,11 +103,11 @@ export default function Side() {
               <Image src={currentUser?.image} />
             </div>
           </div>
-          <div className="col-sm-1 col-xs-1  heading-dot  pull-right">
+          <div className="col-sm-2 col-xs-1  heading-dot  pull-right">
             <i
-              className="fa fa-ellipsis-v fa-2x  pull-right"
+              className="fa fa-sign-out fa-2x pull-right"
               aria-hidden="true"
-            />
+            ></i>
           </div>
           <div className="col-sm-2 col-xs-2 heading-compose  pull-right">
             <i
@@ -148,7 +163,6 @@ export default function Side() {
         </div>
       </div>
 
-      {/* TODO: */}
       <div
         className="side-two"
         style={twosideActive ? { left: "0%" } : { left: "-100%" }}
@@ -157,7 +171,11 @@ export default function Side() {
           <div className="row newMessage-main">
             <div className="col-sm-2 col-xs-2 newMessage-back">
               <i
-                onClick={() => setTwosideActive(!twosideActive)}
+                onClick={() => {
+                  setSearchText("");
+                  setSearchCoversions([]);
+                  setTwosideActive(!twosideActive);
+                }}
                 className="fa fa-arrow-left"
                 aria-hidden="true"
               />
@@ -171,8 +189,12 @@ export default function Side() {
           <div className="col-sm-12 composeBox-inner">
             <div className="form-group has-feedback">
               <input
-                onChange={(e) => fetchConversion(e.target.value)}
+                onChange={(e) => {
+                  setSearchText(e.target.value);
+                  fetchConversion(e.target.value);
+                }}
                 type="text"
+                value={searchText}
                 className="form-control"
                 name="searchText"
                 placeholder="Search People"
@@ -183,18 +205,26 @@ export default function Side() {
         </div>
 
         <div className="row compose-sideBar">
-          {searchCoversions.map((el) => {
+          {searchCoversions.map(({ id, image, first_name, last_name }) => {
             return (
-              <div className="row sideBar-body">
+              <div
+                onClick={() =>
+                  addNewConversion(id, image, toFullName(first_name, last_name))
+                }
+                id={id}
+                className="row sideBar-body"
+              >
                 <div className="col-sm-3 col-xs-3 sideBar-avatar">
                   <div className="avatar-icon">
-                    <Image src={el?.user?.image} />
+                    <Image src={image} />
                   </div>
                 </div>
                 <div className="col-sm-9 col-xs-9 sideBar-main">
                   <div className="row">
                     <div className="col-sm-8 col-xs-8 sideBar-name">
-                      <span className="name-meta">{el?.user?.image}</span>
+                      <span className="name-meta">
+                        {toFullName(first_name, last_name)}
+                      </span>
                     </div>
                     <div className="col-sm-4 col-xs-4 pull-right sideBar-time">
                       <span className="time-meta pull-right">18:18</span>
