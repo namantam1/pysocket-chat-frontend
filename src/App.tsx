@@ -3,6 +3,7 @@ import "assets/css/style.css";
 import Conversion from "component/Conversion";
 import Login from "component/Login";
 import Side from "component/Side";
+import Loading from "core/Loading";
 import { myaxios } from "services/http";
 import {
   ActionType,
@@ -42,7 +43,7 @@ function App() {
   }, []);
 
   return (
-    <div className={loading ? "loading" : ""}>
+    <Loading loading={loading}>
       {login ? (
         <globalContext.Provider value={{ state, dispatch }}>
           <div className="container app">
@@ -55,7 +56,7 @@ function App() {
       ) : (
         <Login />
       )}
-    </div>
+    </Loading>
   );
 }
 
